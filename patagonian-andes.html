@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Patagonian Andes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --stone:    #e8e2d9;
+      --cream:    #f4f0ea;
+      --ink:      #1a1612;
+      --muted:    #6b6259;
+      --glacier:  #7ab8c8;
+      --ice:      #c9e4ed;
+      --terra:    #8b4f32;
+      --moss:     #4a6741;
+      --snow:     #f7f5f2;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--ink);
+      color: var(--stone);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 18px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      height: 100vh;
+      min-height: 600px;
+      display: flex;
+      align-items: flex-end;
+      overflow: hidden;
+      padding: 60px 80px;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 60% 80%, rgba(122,184,200,0.18) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 80% at 20% 50%, rgba(74,103,65,0.25) 0%, transparent 60%),
+        linear-gradient(175deg, #0d0c0a 0%, #1e1a14 40%, #12191e 100%);
+    }
+
+    /* SVG mountain silhouette */
+    .hero-mountains {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 65%;
+    }
+
+    /* Animated aurora-like strip */
+    .aurora {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 35%;
+      background: linear-gradient(180deg,
+        rgba(122,184,200,0.05) 0%,
+        rgba(74,103,65,0.08) 40%,
+        transparent 100%);
+      animation: aurora-shift 12s ease-in-out infinite alternate;
+    }
+    @keyframes aurora-shift {
+      0%   { opacity: 0.4; transform: translateX(-4%) skewX(-2deg); }
+      100% { opacity: 1;   transform: translateX(4%)  skewX(2deg); }
+    }
+
+    /* Stars */
+    .stars {
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 10% 8%, rgba(255,255,255,0.7) 0%, transparent 100%),
+        radial-gradient(1px 1px at 28% 15%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 55% 5%, rgba(255,255,255,0.8) 0%, transparent 100%),
+        radial-gradient(1px 1px at 72% 12%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 85% 7%, rgba(255,255,255,0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 42% 22%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 15% 30%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 90% 20%, rgba(255,255,255,0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 60% 28%, rgba(200,230,240,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 35% 9%, rgba(255,255,255,0.4) 0%, transparent 100%);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 780px;
+    }
+
+    .kicker {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      font-weight: 300;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--glacier);
+      margin-bottom: 24px;
+      opacity: 0;
+      animation: fade-up 0.9s 0.2s ease forwards;
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(52px, 9vw, 110px);
+      font-weight: 900;
+      line-height: 0.92;
+      letter-spacing: -0.02em;
+      color: var(--cream);
+      margin-bottom: 32px;
+      opacity: 0;
+      animation: fade-up 1s 0.45s ease forwards;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--glacier);
+    }
+
+    .hero-sub {
+      font-size: 19px;
+      font-style: italic;
+      color: var(--stone);
+      opacity: 0;
+      animation: fade-up 1s 0.7s ease forwards;
+      max-width: 500px;
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 32px;
+      right: 80px;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--muted);
+      text-transform: uppercase;
+      writing-mode: vertical-rl;
+      opacity: 0;
+      animation: fade-in 1s 1.4s forwards;
+    }
+    .scroll-hint::after {
+      content: '';
+      display: block;
+      width: 1px;
+      height: 50px;
+      background: linear-gradient(to bottom, var(--muted), transparent);
+      margin: 12px auto 0;
+    }
+
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fade-in {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    /* ── INTRO STRIP ── */
+    .intro-strip {
+      background: var(--cream);
+      color: var(--ink);
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 0;
+    }
+
+    .intro-label {
+      padding: 64px 48px;
+      border-right: 1px solid rgba(26,22,18,0.15);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .intro-label .big-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 90px;
+      font-weight: 900;
+      line-height: 1;
+      color: var(--terra);
+      margin-bottom: 8px;
+    }
+
+    .intro-label .big-unit {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .intro-text {
+      padding: 64px 64px 64px 56px;
+    }
+
+    .intro-text p {
+      font-size: 20px;
+      line-height: 1.75;
+      color: var(--ink);
+    }
+
+    .intro-text p + p { margin-top: 24px; }
+
+    /* ── SECTION LAYOUT ── */
+    section {
+      padding: 100px 80px;
+    }
+
+    section.dark {
+      background: var(--ink);
+      color: var(--stone);
+    }
+
+    section.light {
+      background: var(--snow);
+      color: var(--ink);
+    }
+
+    section.mid {
+      background: #13181c;
+      color: var(--stone);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 24px;
+      margin-bottom: 56px;
+    }
+
+    .section-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--glacier);
+      flex-shrink: 0;
+    }
+
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(32px, 5vw, 54px);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+
+    section.light h2  { color: var(--ink); }
+    section.dark h2   { color: var(--cream); }
+    section.mid  h2   { color: var(--cream); }
+
+    /* ── TWO-COL TEXT ── */
+    .two-col {
+      columns: 2;
+      column-gap: 60px;
+    }
+
+    .two-col p {
+      break-inside: avoid;
+      margin-bottom: 20px;
+      font-size: 18px;
+      line-height: 1.75;
+    }
+
+    /* ── STAT CARDS ── */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2px;
+      margin-top: 56px;
+      background: rgba(255,255,255,0.06);
+    }
+
+    .stat-card {
+      padding: 40px 32px;
+      background: rgba(255,255,255,0.03);
+      border-top: 2px solid transparent;
+      transition: border-color 0.3s, background 0.3s;
+    }
+
+    .stat-card:hover {
+      background: rgba(122,184,200,0.08);
+      border-top-color: var(--glacier);
+    }
+
+    .stat-value {
+      font-family: 'Playfair Display', serif;
+      font-size: 48px;
+      font-weight: 900;
+      color: var(--glacier);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .stat-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10.5px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ── PULL QUOTE ── */
+    .pull-quote {
+      border-left: 4px solid var(--glacier);
+      padding: 24px 40px;
+      margin: 48px 0;
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: clamp(22px, 3vw, 32px);
+      line-height: 1.45;
+      color: var(--cream);
+    }
+
+    section.light .pull-quote {
+      border-left-color: var(--terra);
+      color: var(--ink);
+    }
+
+    /* ── LANDMARK CARDS ── */
+    .landmark-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 28px;
+      margin-top: 48px;
+    }
+
+    .landmark-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 36px 32px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .landmark-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(to right, var(--glacier), var(--moss));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+
+    .landmark-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+
+    .landmark-card:hover::before { transform: scaleX(1); }
+
+    .landmark-icon {
+      font-size: 28px;
+      margin-bottom: 16px;
+    }
+
+    .landmark-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--cream);
+      margin-bottom: 12px;
+    }
+
+    .landmark-card p {
+      font-size: 16px;
+      color: var(--stone);
+      line-height: 1.65;
+    }
+
+    .landmark-card .elev {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      color: var(--glacier);
+      margin-top: 16px;
+      text-transform: uppercase;
+    }
+
+    /* ── CLIMATE SECTION ── */
+    .climate-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+
+    .climate-text p {
+      margin-bottom: 20px;
+      font-size: 18px;
+      line-height: 1.75;
+    }
+
+    .season-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 8px;
+    }
+
+    .season-list li {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 20px;
+      font-size: 16px;
+      line-height: 1.5;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .season-name {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--glacier);
+      padding-top: 2px;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #0a0908;
+      color: var(--muted);
+      padding: 48px 80px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    footer .brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      color: var(--stone);
+    }
+
+    footer small {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(to right, var(--glacier), transparent);
+      margin: 40px 0;
+    }
+
+    section.light .divider { background: linear-gradient(to right, var(--terra), transparent); }
+
+    /* Responsive */
+    @media (max-width: 860px) {
+      .hero { padding: 40px; }
+      .scroll-hint { display: none; }
+      .intro-strip { grid-template-columns: 1fr; }
+      .intro-label { border-right: none; border-bottom: 1px solid rgba(26,22,18,0.15); padding: 40px; }
+      .intro-text { padding: 40px; }
+      section { padding: 64px 32px; }
+      .two-col { columns: 1; }
+      .climate-split { grid-template-columns: 1fr; gap: 40px; }
+      footer { flex-direction: column; gap: 16px; text-align: center; padding: 40px 32px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════ HERO ══════════ -->
+<header class="hero">
+  <div class="hero-bg"></div>
+  <div class="stars"></div>
+  <div class="aurora"></div>
+
+  <!-- Mountain silhouette SVG -->
+  <svg class="hero-mountains" viewBox="0 0 1440 500" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="mtGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#2a3f4e" stop-opacity="0.95"/>
+        <stop offset="100%" stop-color="#0d1317" stop-opacity="1"/>
+      </linearGradient>
+      <linearGradient id="snowGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#c9e4ed" stop-opacity="0.9"/>
+        <stop offset="100%" stop-color="#c9e4ed" stop-opacity="0"/>
+      </linearGradient>
+      <linearGradient id="midGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#1a2b36" stop-opacity="0.9"/>
+        <stop offset="100%" stop-color="#0d1317" stop-opacity="1"/>
+      </linearGradient>
+    </defs>
+    <!-- back range -->
+    <polygon points="0,500 0,300 120,180 260,260 380,120 500,200 620,80 740,170 860,60 980,160 1100,100 1220,190 1340,130 1440,200 1440,500" fill="url(#midGrad)" opacity="0.7"/>
+    <!-- front range -->
+    <polygon points="0,500 0,380 100,280 200,320 320,200 430,280 550,170 650,240 760,140 860,230 960,160 1060,260 1160,190 1280,280 1380,220 1440,260 1440,500" fill="url(#mtGrad)"/>
+    <!-- snow caps -->
+    <polygon points="550,170 530,185 565,175 580,183 565,170" fill="url(#snowGrad)"/>
+    <polygon points="760,140 740,158 775,148 790,155 772,140" fill="url(#snowGrad)"/>
+    <polygon points="320,200 300,216 337,207 350,213 335,200" fill="url(#snowGrad)"/>
+    <polygon points="860,160 842,178 875,168 888,174 873,160" fill="url(#snowGrad)"/>
+    <polygon points="1160,190 1140,207 1175,197 1188,203 1173,190" fill="url(#snowGrad)"/>
+  </svg>
+
+  <div class="hero-content">
+    <p class="kicker">South America &nbsp;·&nbsp; 49°S – 55°S &nbsp;·&nbsp; The Southern Andes</p>
+    <h1>The <em>Patagonian</em> Andes</h1>
+    <p class="hero-sub">Where the world's longest mountain chain meets its wildest, most elemental end.</p>
+  </div>
+  <span class="scroll-hint">Scroll to explore</span>
+</header>
+
+
+<!-- ══════════ INTRO STRIP ══════════ -->
+<div class="intro-strip">
+  <div class="intro-label">
+    <div class="big-num">8,900</div>
+    <div class="big-unit">km — length of the Andes</div>
+    <div style="margin-top:32px;">
+      <div class="big-num" style="font-size:64px; color:#4a6741;">5,500</div>
+      <div class="big-unit">miles — coast to coast</div>
+    </div>
+  </div>
+  <div class="intro-text">
+    <p>The Andes are the longest continental mountain range in the world, stretching 8,900 kilometres along the entire western spine of South America. They run through seven countries — Venezuela, Colombia, Ecuador, Peru, Bolivia, Chile, and Argentina — and reach their wild, dramatic southern conclusion in Patagonia.</p>
+    <p>In Patagonia, the Andes do not simply end — they shatter. Numerous transverse and longitudinal depressions cut through this rugged portion of the chain, and many ranges are occupied by vast ice fields, glaciers, rivers, lakes, and fjords. Here the mountains are not merely tall — they are untamed.</p>
+  </div>
+</div>
+
+
+<!-- ══════════ GEOGRAPHY ══════════ -->
+<section class="dark">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <h2>Geography &amp; Formation</h2>
+  </div>
+
+  <div class="two-col">
+    <p>The Andean mountain system is the result of global plate-tectonic forces during the Cenozoic Era — roughly the past 65 million years — built upon even earlier geologic activity. About 250 million years ago, the crustal plates of Earth's landmass were joined into the supercontinent Pangaea. The subsequent breakup of Pangaea, and of its southern portion, Gondwana, dispersed the plates outward.</p>
+    <p>The collision of two of these plates — the continental South American Plate and the oceanic Nazca Plate — gave rise to the mountain-building activity that produced the Andes. Tectonic forces above the subduction zone along the entire west coast of South America continue to shape the range to this day, making it one of the most geologically active mountain systems on Earth.</p>
+    <p>The Patagonian Andes rise north of the Strait of Magellan, forming the westernmost wall of the region. On the Argentine side, Patagonia is divided into Andean, Central, and Atlantic zones. Andean Patagonia is the most mountainous, where the mighty Andean range crosses. Central Patagonia is dominated by vast plains; Atlantic Patagonia forms the coastal fringe.</p>
+    <p>The Patagonian tableland rises in a series of terraces from high coastal cliffs to the foot of the Andes, climbing from about 90 metres at the coast to 3,000 feet at the base of the mountains. South of the Río Negro, the plains grow more irregular, marked by volcanic eruptions and basaltic sheets from the geologically recent past.</p>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="stat-value">6,961<span style="font-size:24px;">m</span></div>
+      <div class="stat-label">Aconcagua — highest peak<br>in the Western Hemisphere</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">4,000<span style="font-size:24px;">m</span></div>
+      <div class="stat-label">Average height<br>of the Andes</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">700<span style="font-size:24px;">km</span></div>
+      <div class="stat-label">Maximum width<br>of the range</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">7</div>
+      <div class="stat-label">South American countries<br>the Andes cross</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════ ICE & GLACIERS ══════════ -->
+<section class="light">
+  <div class="section-header">
+    <span class="section-num" style="color: var(--terra);">02</span>
+    <h2>Ice Fields &amp; Glaciers</h2>
+  </div>
+
+  <div class="pull-quote">
+    "Patagonia is home to the Northern and Southern Icefields — the second largest continental ice fields in the world, after those found in Antarctica."
+  </div>
+
+  <div class="two-col">
+    <p>Along the Chilean side of the Patagonian Andes lie the Northern and Southern Icefields, two of the most spectacular concentrations of ice on Earth outside the poles. The Northern Icefield covers a total surface of about 4,200 square kilometres and extends for almost 200 kilometres. The larger Southern Icefield covers around 14,000 square kilometres and stretches over 350 kilometres in length.</p>
+    <p>These vast reservoirs of ice feed nearly 100 glaciers across the region. The most famous, the Perito Moreno glacier in Los Glaciares National Park, calves spectacularly into the turquoise waters of Lago Argentino. Visitors can hike across its surface, watch icebergs crash into the water, or approach by boat — an encounter with a living, moving landscape on a scale difficult to comprehend.</p>
+    <p>Yet this frozen world is shrinking. Glaciers have retreated in all Andean countries over the last four decades due to atmospheric warming. An extensive survey concluded that current glacier retreat is unprecedented since at least the Little Ice Age of the mid-17th century. The loss is most pronounced on small glaciers at low altitudes — several have disappeared entirely, with more projected to follow.</p>
+    <p>The consequences extend far beyond the mountains. The Andes contribute up to 35 percent of annual river basin water supply in the more arid regions of Peru and Chile. Several major cities rely on glacial runoff for drinking water and hydroelectric power. The shrinking ice of Patagonia is thus not only a visual loss — it is a growing threat to the livelihoods of millions downstream.</p>
+  </div>
+
+  <div class="divider"></div>
+</section>
+
+
+<!-- ══════════ LANDMARKS ══════════ -->
+<section class="mid">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <h2>Iconic Peaks &amp; Places</h2>
+  </div>
+
+  <div class="landmark-grid">
+    <div class="landmark-card">
+      <div class="landmark-icon">🏔</div>
+      <h3>Cerro Fitz Roy</h3>
+      <p>Rising above El Chaltén in Los Glaciares National Park, Fitz Roy's jagged granite spire is one of the most photographed peaks in the world. The trek to Laguna de los Tres, at its base, is considered among the finest in Patagonia.</p>
+      <div class="elev">Elevation — 3,405 m / 11,171 ft</div>
+    </div>
+
+    <div class="landmark-card">
+      <div class="landmark-icon">🗼</div>
+      <h3>Cerro Torre</h3>
+      <p>A needle of granite and ice, Cerro Torre was long considered the world's most difficult climb. Its near-vertical walls, draped in mushrooms of rime ice, form a silhouette unlike any other mountain on Earth.</p>
+      <div class="elev">Elevation — 3,128 m / 10,262 ft</div>
+    </div>
+
+    <div class="landmark-card">
+      <div class="landmark-icon">🧊</div>
+      <h3>Perito Moreno Glacier</h3>
+      <p>One of very few glaciers in the world that is not retreating, the Perito Moreno advances at up to 2 metres per day. Its ice wall, rising 60–70 metres above the lake surface, periodically ruptures in dramatic collapses that draw crowds of awestruck spectators.</p>
+      <div class="elev">Area — 250 km² · Los Glaciares NP</div>
+    </div>
+
+    <div class="landmark-card">
+      <div class="landmark-icon">🌊</div>
+      <h3>Strait of Magellan</h3>
+      <p>The natural passage separating continental South America from Tierra del Fuego marks the southern limit of the Patagonian Andes. First navigated by Ferdinand Magellan in 1520, this narrow waterway between mountain walls has shaped the history of global exploration.</p>
+      <div class="elev">Length — 570 km · Connects Pacific &amp; Atlantic</div>
+    </div>
+
+    <div class="landmark-card">
+      <div class="landmark-icon">🌲</div>
+      <h3>Los Alerces National Park</h3>
+      <p>A UNESCO World Heritage Site, Los Alerces protects over 260,000 hectares of forest, lakes, and rivers. Ancient larch trees — some more than 2,600 years old — grow here, making it among the most ecologically significant forests in South America.</p>
+      <div class="elev">Patagonian Andes, Argentina</div>
+    </div>
+
+    <div class="landmark-card">
+      <div class="landmark-icon">🦅</div>
+      <h3>Cordillera Darwin</h3>
+      <p>Entirely within Chilean territory, Cordillera Darwin stretches from the Beagle Channel to Almirantazgo Fjord. Much of this range remains unexplored, accessible only by sea or expedition. Its remote, unvisited valleys represent one of the last true wilderness frontiers on Earth.</p>
+      <div class="elev">Tierra del Fuego, Chile</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════ CLIMATE & TRAVEL ══════════ -->
+<section class="dark">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <h2>Climate &amp; When to Visit</h2>
+  </div>
+
+  <div class="climate-split">
+    <div class="climate-text">
+      <p>The Patagonian Andes shape their own weather, and it is famously capricious. The Andes act as a dramatic barrier between the wet Pacific and the arid steppe: moisture-laden westerly winds deposit enormous rainfall on the Chilean side, feeding lush temperate rainforests and feeding the great icefields, while the Argentine side lies in deep rain shadow — dry, windswept, and vast.</p>
+      <p>Winds in Patagonia are legendary. They can arrive without warning, gusting to extraordinary force even on otherwise clear days. Trekkers on the famous W-Circuit in Torres del Paine have learned to read the sky with particular attention. Yet on calm days, the clarity of the light here — far from industrial haze, at the bottom of the world — is unlike anywhere else on Earth.</p>
+      <div class="divider" style="margin-top: 24px;"></div>
+      <p>The region spans two countries with different infrastructure and access. Argentine Patagonia is served by National Route 40, running north to south through the Andean mountains, connecting destinations like San Martín de los Andes, Bariloche, and El Chaltén. Chilean Patagonia is more rugged, with extensive waterways and ferry routes linking its fjords and archipelagoes.</p>
+    </div>
+
+    <div>
+      <p style="font-family: 'DM Mono', monospace; font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:var(--glacier); margin-bottom:20px;">Best Times to Visit</p>
+      <ul class="season-list">
+        <li>
+          <span class="season-name">Nov – Mar</span>
+          <span>Austral summer — ideal for trekking, glacier hikes, and camping. Long daylight hours. Busiest season; book accommodation well in advance.</span>
+        </li>
+        <li>
+          <span class="season-name">Apr – May</span>
+          <span>Autumn brings vivid foliage of lenga beech forests. Fewer crowds, cooler temperatures. Excellent for photography and visiting towns like El Chaltén and Ushuaia.</span>
+        </li>
+        <li>
+          <span class="season-name">Jun – Aug</span>
+          <span>Austral winter — ski season at resorts like Cerro Catedral near Bariloche. Snow transforms the mountains. Some hiking trails and park services are limited.</span>
+        </li>
+        <li>
+          <span class="season-name">Sep – Oct</span>
+          <span>Spring — wildflowers emerge, wildlife is active. Whale season begins at Península Valdés. Weather is transitional; expect rapidly changing conditions.</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer>
+  <span class="brand">The Patagonian Andes</span>
+  <small>Sources: Britannica · Wikipedia · Andean Trails · ICCI · Visit Argentina</small>
+</footer>
+
+</body>
+</html>
