@@ -1,0 +1,6 @@
+Korean Resident Registration Number Test File 1
+
+Name: Kim Min-jun
+SSN: 900115-1234567
+
+This file contains Korean personal identification data for DLP testing purposes.
